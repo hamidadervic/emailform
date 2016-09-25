@@ -1,0 +1,139 @@
+<html>
+<!--  This is an e-mail form made by Hamida Dervic. 
+    When the form is submitted, informations are send to our file not to an e-mail.
+    Form is available for computers and tablets/Not responsive for phones.
+-->
+   <head>
+      <title> E-mail form </title>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+       <style>
+           body {
+               margin: 0;
+               padding: 0;
+           }
+           #forma{
+               width: 500px;
+               height: 300px;
+               background: black;
+                border-bottom-left-radius: 6%;
+               border-top-right-radius: 6%;
+               margin: auto;
+               margin-top:100px;
+               box-shadow: 5px 5px  30px gray;
+               font-size: 18px;
+               position: relative;
+           }
+           
+           #left, #right{
+               padding: 15px;
+               border-bottom-left-radius: 6%;
+               border-top-right-radius: 6%;
+           }
+           
+           #left{
+               width: 100px;
+               height: 200px;
+               background: #ffc61a;
+               margin-left: 20px;
+               float: left;
+           }
+           
+           #right{
+               margin-left:152px;
+               background: #ffd24d;
+               height: 200px;
+               width: 300px;
+           }
+           
+           /* Stilizacija error klase */
+           .error {
+               color:  #ff0000;
+               font-size: 12px;
+           }
+           
+           #submit {
+               cursor: pointer;
+               background: black;
+               color: gold;
+               border: 1px solid white;
+               box-shadow: 1px 1px 10px gray;
+           }
+       </style>
+    </head>
+<body style="background: url('http://cdn.wallpapersafari.com/11/78/7sMYnD.png');">
+      <!-- PHP za formu -->
+            <?php
+
+    $imeErr = $emailErr = $commentsErr =  "";
+    $ime = $email = $gender = $comments = "";
+
+    
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        
+    if(isset($_POST["submit"])){
+    $ime = test_input($_POST["ime"]);
+    $email = test_input($_POST["email1"]);
+    $comments = test_input($_POST["comments"]);
+    } 
+     if(empty($_POST["ime"]) || empty($_POST["email1"]) ){
+            $imeErr = $emailErr = "Required";
+     } else {
+           if(!preg_match("/^[a-zA-Z ]*$/",$ime) || !preg_match("/^[a-zA-Z ]*$/",$comments) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+               $imeErr = $commentsErr = "Letters and white space";
+                $emailErr = "Invalid email format"; 
+                }
+            else {
+           $gender = $_POST["gender"];
+                
+            $informacije = $ime . " |" . $email . " | " . $gender . " | " . $comments . "||||";
+            $fajl = fopen("nekifajl.txt", "a");
+            fwrite($fajl,$informacije);
+            
+               echo "<script>
+               alert('Thanks for the submiting our form!');
+               </script>";
+            }  
+         }
+       }
+    
+    
+    
+    
+    function test_input($data){
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+    
+    ?>
+<!-- Kraj PHP-a za formu -->
+    
+<!-- Pocetak HTML forme koja ce biti obradjivana u PHP-u -->
+    <form id="forma" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+        <center style="padding:5px; color:white;"> E-mail form </center>
+         <div id="left">
+        Name: <br/>
+        E-mail: <br/>
+        Gender: <br/>
+        Suggestions: <br/>
+             
+        </div>
+        
+        <div id="right">
+        <input type="text" name="ime" maxlength="30"> <span class="error"> * <?php echo $imeErr;?> </span>  <br/>
+        <input type="text" name="email1" maxlength="30"/> <span class="error"> *  <?php echo $emailErr;?> </span>  <br/>
+               <input name="gender" type="radio" value="Male" checked/> Male 
+               <input name="gender" type="radio" value="Female"/> Female  <br/>
+            <textarea name="comments" cols="22" rows="5" maxlength="100"> </textarea> <span class="error"><?php echo  $commentsErr;?> </span>
+        <input id="submit" type="submit" name="submit" style="position: absolute; top: 200px; right: 210px; ">
+        </div>
+    </form>
+<!-- Kraj HTML forme koja ce biti obradjivana u PHP-u -->
+
+  
+    
+</body>
+</html>
